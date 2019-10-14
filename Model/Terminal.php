@@ -24,6 +24,11 @@ class Terminal
      * Used to store the Product pricing data
      */
     private $_pricingRepository;
+    private $_scopeConfig;
+    private $_fileFactory;
+    private $_csvProcessor;
+    private $_directoryList;
+
 
     /**
      * Terminal constructor.
@@ -31,11 +36,19 @@ class Terminal
      */
     public function __construct(
         Totals $totals,
-        ProductPricingRepository $pricingRepository
+        ProductPricingRepository $pricingRepository,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
+        \Magento\Framework\App\Response\Http\FileFactory $fileFactory,
+        \Magento\Framework\File\Csv $csvProcessor,
+        \Magento\Framework\App\Filesystem\DirectoryList $directoryList
     )
     {
         $this->_totals = $totals;
         $this->_pricingRepository = $pricingRepository;
+        $this->_scopeConfig = $scopeConfig;
+        $this->_fileFactory = $fileFactory;
+        $this->_csvProcessor = $csvProcessor;
+        $this->_directoryList = $directoryList;
     }
 
     /**
@@ -61,6 +74,42 @@ class Terminal
     public function getTotal()
     {
         return $this->total;
+    }
+
+    public function getCartDownload()
+    {
+        if(! $this->allowCartDownload()){
+            throw new \Magento\Framework\Exception\AuthorizationException(__('Not Authorised - please contact your admin'));
+        }
+
+        $fileName = 'basket_items.csv';
+        $filePath = $this->_directoryList->getPath(\Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR)
+            . "/" . $fileName;
+
+        $this->_csvProcessor
+            ->setDelimiter(';')
+            ->setEnclosure('"')
+            ->saveData(
+                $filePath,
+                $this->_totals->getItems()
+            );
+
+        return $this->_fileFactory->create(
+            $fileName,
+            [
+                'type' => "filename",
+                'value' => $fileName,
+                'rm' => true,
+            ],
+            \Magento\Framework\App\Filesystem\DirectoryList::VAR_DIR,
+            'application/octet-stream'
+        );
+
+    }
+
+    private function allowCartDownload()
+    {
+        return $this->_scopeConfig->getValue('cartitems/general/allow_download', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
     }
 
 }

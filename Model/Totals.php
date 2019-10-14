@@ -40,4 +40,9 @@ class Totals
 
         return $total;
     }
+
+    public function getItems()
+    {
+        return $this->items;
+    }
 }

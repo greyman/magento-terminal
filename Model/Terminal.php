@@ -71,11 +71,19 @@ class Terminal
         $this->total = $this->_totals->getTotal();
     }
 
+    /**
+     * @return $this->total
+     */
     public function getTotal()
     {
         return $this->total;
     }
 
+    /**
+     * @return \Magento\Framework\App\ResponseInterface
+     * @throws \Magento\Framework\Exception\AuthorizationException
+     * @throws \Magento\Framework\Exception\FileSystemException
+     */
     public function getCartDownload()
     {
         if(! $this->allowCartDownload()){
@@ -107,6 +115,9 @@ class Terminal
 
     }
 
+    /**
+     * @return mixed
+     */
     private function allowCartDownload()
     {
         return $this->_scopeConfig->getValue('cartitems/general/allow_download', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);

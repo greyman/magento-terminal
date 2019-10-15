@@ -1,21 +1,16 @@
 # magento-terminal
+## Part 1
 ```<?php
-/**
- * Created by PhpStorm.
- * User: richard.grey
- * Date: 2019-10-14
- * Time: 18:04
- */
 
-
-//Part 1
 $a = '1'; //Assign '1' to the variable $a
 $b = &$a; //Assign by reference the value $a to the variable $b
 $b = "2$b"; //Concatinate 2 to the variable $b and re-assign to $b
 echo $a.", ".$b; //Will echo 21, 21 as the variable $b is a copy of $a rather than a new variable. When we update $b, $a will have the same value.
+```
 
+## Part 2
 
-//Part 2
+```<?php
 /*
  * Below is my prototype application in vanilla php
  */
@@ -272,3 +267,5 @@ echo "\n".money_format('%i',$terminal->total);
 
 
 ```
+## Part 3
+[See wiki https://github.com/greyman/magento-terminal/wiki/Part-3](https://github.com/greyman/magento-terminal/wiki/Part-3)
